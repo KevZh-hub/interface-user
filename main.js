@@ -2,11 +2,29 @@ import * as THREE from 'three';
 
 let alpha, beta, gamma = 0;
 
-window.addEventListener('deviceorientation', (event) => {
-    alpha = event.alpha;
-    beta = event.beta;
-    gamma = event.gamma;
-});
+function oriantation () {
+  if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+    DeviceOrientationEvent.requestPermission()
+      .then(permissionState => {
+        if (permissionState === 'granted') {
+          window.addEventListener('deviceorientation', (event) => {
+            alpha = event.alpha;
+            beta = event.beta;
+            gamma = event.gamma;
+          });
+        }
+      })
+      .catch(console.error);
+  } else {
+    window.addEventListener('deviceorientation', (event) => {
+      alpha = event.alpha;
+      beta = event.beta;
+      gamma = event.gamma;
+    });
+  }
+}
+
+oriantation();
 
 const degToRad = (deg) =>  deg * (Math.PI / 180);
 
@@ -19,11 +37,9 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setAnimationLoop(animate);
 document.body.appendChild(renderer.domElement);
 
-
-
 const geometry = new THREE.BoxGeometry(1, 1, 1);
-const material = new THREE.MeshBasicMaterial({
-    color: 0x00ff00
+const material = new THREE.MeshNormalMaterial({
+  color: 0x00ff00
 });
 const cube = new THREE.Mesh(geometry, material);
 scene.add(cube);
@@ -32,11 +48,9 @@ camera.position.z = 5;
 
 function animate() {
 
-    cube.rotation.z = degToRad(alpha) / 2;
-    cube.rotation.x = degToRad(beta);
-    cube.rotation.y = degToRad(gamma);
+  cube.rotation.z = degToRad(alpha) / 2;
+  cube.rotation.x = degToRad(beta);
+  cube.rotation.y = degToRad(gamma);
 
-    renderer.render(scene, camera);
+  renderer.render(scene, camera);
 }
-
-animate();
