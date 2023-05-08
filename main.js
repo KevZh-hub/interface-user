@@ -25,7 +25,7 @@ async function requestMotionPermission() {
 
 requestMotionPermission();
 
-const degToRad = (deg) => deg * (Math.PI / 280);
+const degToRad = (deg) => deg * (Math.PI / 180);
 // On prepare la scène
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0xffffff);
