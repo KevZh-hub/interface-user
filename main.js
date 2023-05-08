@@ -25,8 +25,8 @@ async function requestMotionPermission() {
 
 requestMotionPermission();
 
-const degToRad = (deg) => deg * (Math.PI / 180);
 // On prepare la scène
+const degToRad = (deg) => deg * (Math.PI / 180);
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0xffffff);
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -51,23 +51,23 @@ loader.load(
   'ballmazefirst.gltf',
   function (gltf) {
 
-    const object = gltf.scene.children[0];
+    const laby = gltf.scene.children[0];
 // On créer l'objet et on defini ses valeurs (taille, orientation et position)
-    object.material = new THREE.MeshStandardMaterial({
+    laby.material = new THREE.MeshStandardMaterial({
       color: 0x3366cc
     });
 
-    object.scale.set(0.6, 0.6, 0.6); 
-    object.rotation.x = -0.99;
-    object.rotation.y = 0.5;
-    scene.add(object);
+    laby.scale.set(0.6, 0.6, 0.6); 
+    laby.rotation.x = -0.99;
+    laby.rotation.y = 0.5;
+    scene.add(laby);
 
     window.addEventListener('devicemotion', function (event) {
       const acceleration = event.accelerationIncludingGravity;
-
+// La couleur de l'objet change lors d'une acceleration
       if (acceleration.x > 15 || acceleration.y > 15 || acceleration.z > 15) {
         const randomColor = Math.floor(Math.random() * 16777215).toString(16);
-        object.material.color.set('#' + randomColor);
+        laby.material.color.set('#' + randomColor);
       }
     });
   },
