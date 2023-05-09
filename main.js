@@ -1,9 +1,8 @@
 import * as THREE from 'three';
-import {
-  GLTFLoader
-} from 'three/addons/loaders/GLTFLoader.js';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
 let alpha, beta, gamma = 0;
+let isObject1Visible = true;
 
 document.getElementById('btn').addEventListener('click', requestMotionPermission);
 async function requestMotionPermission() {
@@ -45,46 +44,48 @@ const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
 directionalLight.position.set(1, 1, 1);
 scene.add(directionalLight);
 
-
 const loader = new GLTFLoader();
-loader.load(
-  'ballmazefirst.gltf',
-  function (gltf) {
+let object1, object2;
 
-    const laby = gltf.scene.children[0];
-// On créer l'objet et on defini ses valeurs (taille, orientation et position)
-    laby.material = new THREE.MeshStandardMaterial({
-      color: 0x3366cc
-    });
+loader.load('laby1.gltf', (gltf) => {
+  object1 = gltf.scene.children[0];
+  object1.material = new THREE.MeshStandardMaterial({ color: 0x3366cc });
+  object1.scale.set(0.6, 0.6, 0.6); 
+  object1.rotation.x = -0.99;
+  object1.rotation.y = 0.5;
+  scene.add(object1);
+});
 
-    laby.scale.set(0.6, 0.6, 0.6); 
-    laby.rotation.x = -0.99;
-    laby.rotation.y = 0.5;
-    scene.add(laby);
+loader.load('laby2.gltf', (gltf) => {
+  object2 = gltf.scene.children[0];
+  object2.material = new THREE.MeshStandardMaterial({ color: 0xff0000 });
+  object2.scale.set(0.6, 0.6, 0.6); 
+  object2.rotation.x = -0.99;
+  object2.rotation.y = 0.5;
+  scene.add(object2);
+  object2.visible = false;
+});
 
-    window.addEventListener('devicemotion', function (event) {
-      const acceleration = event.accelerationIncludingGravity;
-// La couleur de l'objet change lors d'une acceleration
-      if (acceleration.x > 15 || acceleration.y > 15 || acceleration.z > 15) {
-        const randomColor = Math.floor(Math.random() * 16777215).toString(16);
-        laby.material.color.set('#' + randomColor);
-      }
-    });
-  },
-  function (xhr) {
-    console.log((xhr.loaded / xhr.total * 100) + '% chargé');
-  },
-  function (error) {
-    console.error('Erreur de chargement', error);
+window.addEventListener('devicemotion', function (event) {
+  const acceleration = event.accelerationIncludingGravity;
+  if (acceleration.x > 15 || acceleration.y > 15 || acceleration.z > 15) {
+    if (isObject1Visible) {
+      object1.visible = false;
+      object2.visible = true;
+      object1.material.color.setRGB(Math.random(), Math.random(), Math.random());
+    } else {
+      object1.visible = true;
+      object2.visible = false;
+      object2.material.color.setRGB(Math.random(), Math.random(), Math.random());
+    }
+    isObject1Visible = !isObject1Visible;
   }
-);
+});
 
 function animate() {
-
   scene.rotation.z = degToRad(alpha) / 2;
   scene.rotation.x = degToRad(beta);
   scene.rotation.y = degToRad(gamma);
-
   renderer.render(scene, camera);
 }
 
